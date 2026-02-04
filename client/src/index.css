@@ -1,0 +1,49 @@
+@import url('https://hangeul.pstatic.net/hangeul_static/css/maru-buri.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    /* 노이즈 텍스처 */
+    --paper-noise: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+}
+
+body {
+    font-family: 'MaruBuri', serif;
+    background-color: #fffdf5;
+}
+
+/* --- 핵심 수정 부분 --- */
+.grid-pattern {
+    /* 1. 가장 중요한 배경색 (불투명한 미색) */
+    background-color: #fffcf0;
+
+    /* 2. 배경 이미지 레이어: 노이즈 텍스처 + 가로선 + 세로선 */
+    background-image:
+            var(--paper-noise),
+            linear-gradient(to right, rgba(230, 106, 94, 0.15) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(230, 106, 94, 0.15) 1px, transparent 1px);
+
+    /* 3. 각 레이어별 혼합 모드 설정 */
+    /* noise는 multiply로 배경과 섞고, 선들은 normal로 위에 그대로 그림 */
+    background-blend-mode: multiply, normal, normal;
+
+    /* 4. 격자 크기 */
+    background-size: auto, 40px 40px, 40px 40px;
+
+    /* 5. 테두리 */
+    border: 1px solid rgba(230, 106, 94, 0.3);
+}
+
+/* 카드 기본 쉐도우 */
+.paper-card-base {
+    box-shadow:
+            0 2px 5px rgba(0,0,0,0.05),
+            0 10px 20px rgba(0,0,0,0.03);
+}
+
+/* --- 색상 바리에이션 (불투명도 유지를 위해 CSS에서 직접 정의) --- */
+.paper-variant-1 { background-color: #fffcf0; } /* 기본 미색 */
+.paper-variant-2 { background-color: #fcfae8; } /* 약간 노란빛 */
+.paper-variant-3 { background-color: #f7f4e0; } /* 오래된 종이빛 */
