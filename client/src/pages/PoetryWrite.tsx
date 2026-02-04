@@ -2,21 +2,13 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPoetry } from '../api/poetryApi';
 import { motion } from 'framer-motion';
-
-// 1. 폼 데이터 타입 정의 (인터페이스)
-interface PoetryFormData {
-    title: string;
-    writer: string;
-    content: string;
-    template: 'VINTAGE' | 'CLEAN';
-    type: 'ESSAY' | 'RELAY';
-}
+import type { ArticleData } from '../types/poetry'; // [수정] 기존 타입 import
 
 const PoetryWrite = () => {
     const navigate = useNavigate();
 
-    // 2. useState에 제네릭으로 타입 적용
-    const [formData, setFormData] = useState<PoetryFormData>({
+    // [수정] ArticleData 인터페이스 사용 (타입 중복 정의 제거)
+    const [formData, setFormData] = useState<ArticleData>({
         title: '',
         writer: '',
         content: '',
@@ -31,8 +23,8 @@ const PoetryWrite = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    // 3. key 타입을 PoetryFormData의 키로 제한
-    const handleSelect = (key: keyof PoetryFormData, value: string) => {
+    // keyof ArticleData로 타입 안전성 확보
+    const handleSelect = (key: keyof ArticleData, value: string) => {
         setFormData(prev => ({
             ...prev,
             [key]: value
@@ -47,12 +39,7 @@ const PoetryWrite = () => {
 
         setIsSubmitting(true);
         try {
-            // 4. @ts-ignore 제거
-            // (만약 여기서 에러가 난다면 poetryApi.ts의 createPoetry 함수 인자 타입을 any로 바꾸거나,
-            //  이 인터페이스와 맞추어주세요. 급하다면 'formData as any'를 사용하세요.)
-
-            // 여기서는 타입 호환성을 위해 as any로 안전하게 처리했습니다.
-            // (poetryApi.ts를 수정했다면 as any를 제거해도 됩니다)
+            // [수정] 타입이 정확히 일치하므로 에러 없음
             await createPoetry(formData);
 
             alert("소중한 글이 저장되었습니다.");
@@ -65,8 +52,12 @@ const PoetryWrite = () => {
         }
     };
 
-    // 템플릿에 따른 배경색 클래스 결정
-    const paperClass = formData.template === 'CLEAN' ? 'paper-variant-2' : 'paper-variant-1';
+    // [수정] 선택된 템플릿에 따라 CSS 클래스 결정
+    const themeClass = formData.template === 'CLEAN' ? 'theme-clean' : 'theme-vintage';
+
+    // [수정] 줄 노트 선 색상 (격자는 사라지고 가로줄만 남음)
+    // Clean일 때는 아주 연한 회색, Vintage일 때는 조금 더 진한 색
+    const lineColor = formData.template === 'CLEAN' ? '#f3f4f6' : '#e7e5e4';
 
     return (
         <div className="min-h-screen bg-[#fffdf5] text-stone-800 font-serif flex flex-col items-center py-12 px-4 overflow-x-hidden">
@@ -92,7 +83,8 @@ const PoetryWrite = () => {
                 transition={{ duration: 0.6, ease: "easeOut" }}
                 className="w-full max-w-2xl"
             >
-                <form onSubmit={handleSubmit} className={`relative w-full p-8 md:p-12 grid-pattern paper-card-base ${paperClass} flex flex-col gap-8 transition-colors duration-500`}>
+                {/* [수정] grid-pattern 제거 -> paper-texture 사용, themeClass 적용 */}
+                <form onSubmit={handleSubmit} className={`relative w-full p-8 md:p-12 paper-texture ${themeClass} flex flex-col gap-8`}>
 
                     {/* 종이 질감 오버레이 */}
                     <div className="absolute inset-0 pointer-events-none mix-blend-multiply bg-stone-50/20"></div>
@@ -101,7 +93,6 @@ const PoetryWrite = () => {
 
                         {/* 설정 영역 (Type & Template 선택) */}
                         <div className="flex flex-wrap gap-8 mb-2 border-b border-stone-300/50 pb-6">
-                            {/* 글 형식 선택 */}
                             <div className="flex flex-col gap-2">
                                 <span className="text-xs font-bold text-stone-400 uppercase tracking-wider">Type</span>
                                 <div className="flex gap-2">
@@ -122,7 +113,6 @@ const PoetryWrite = () => {
                                 </div>
                             </div>
 
-                            {/* 테마 선택 */}
                             <div className="flex flex-col gap-2">
                                 <span className="text-xs font-bold text-stone-400 uppercase tracking-wider">Theme</span>
                                 <div className="flex gap-2">
@@ -136,7 +126,7 @@ const PoetryWrite = () => {
                                     <button
                                         type="button"
                                         onClick={() => handleSelect('template', 'CLEAN')}
-                                        className={`px-3 py-1 text-sm rounded-full border transition-all ${formData.template === 'CLEAN' ? 'bg-[#fcfae8] text-stone-800 border-stone-400 font-bold ring-1 ring-stone-300' : 'bg-[#fcfae8] text-stone-400 border-stone-200'}`}
+                                        className={`px-3 py-1 text-sm rounded-full border transition-all ${formData.template === 'CLEAN' ? 'bg-white text-stone-800 border-stone-400 font-bold ring-1 ring-stone-300' : 'bg-white text-stone-400 border-stone-200'}`}
                                     >
                                         Clean
                                     </button>
@@ -144,7 +134,7 @@ const PoetryWrite = () => {
                             </div>
                         </div>
 
-                        {/* 제목 입력 */}
+                        {/* 제목 */}
                         <div className="flex flex-col gap-2">
                             <label htmlFor="title" className="text-sm text-stone-500 font-bold italic">Title</label>
                             <input
@@ -153,13 +143,13 @@ const PoetryWrite = () => {
                                 name="title"
                                 value={formData.title}
                                 onChange={handleChange}
-                                placeholder="제목을 적어주세요 (무제 가능)"
-                                className="w-full bg-transparent border-b-2 border-stone-300 focus:border-red-400 outline-none py-2 text-2xl font-bold text-stone-800 placeholder-stone-300 transition-colors"
+                                placeholder="제목을 적어주세요"
+                                className="w-full bg-transparent border-b-2 border-stone-300 focus:border-red-400 outline-none py-2 text-2xl font-bold placeholder-stone-300 transition-colors"
                                 autoComplete="off"
                             />
                         </div>
 
-                        {/* 작가 입력 */}
+                        {/* 작가 */}
                         <div className="flex flex-col gap-2">
                             <label htmlFor="writer" className="text-sm text-stone-500 font-bold italic">Author</label>
                             <input
@@ -169,12 +159,12 @@ const PoetryWrite = () => {
                                 value={formData.writer}
                                 onChange={handleChange}
                                 placeholder="당신의 이름을 남겨주세요"
-                                className="w-full bg-transparent border-b-2 border-stone-300 focus:border-red-400 outline-none py-2 text-lg text-stone-700 placeholder-stone-300 transition-colors"
+                                className="w-full bg-transparent border-b-2 border-stone-300 focus:border-red-400 outline-none py-2 text-lg placeholder-stone-300 transition-colors"
                                 autoComplete="off"
                             />
                         </div>
 
-                        {/* 내용 입력 */}
+                        {/* 내용 (격자 제거, 줄만 남김) */}
                         <div className="flex flex-col gap-2 mt-4">
                             <label htmlFor="content" className="text-sm text-stone-500 font-bold italic">Content</label>
                             <div className="relative">
@@ -185,9 +175,10 @@ const PoetryWrite = () => {
                                     onChange={handleChange}
                                     placeholder="이곳에 당신의 문장을 기록하세요..."
                                     rows={10}
-                                    className="w-full bg-transparent border-none outline-none text-lg leading-loose text-stone-800 placeholder-stone-300 resize-none font-serif"
+                                    className="w-full bg-transparent border-none outline-none text-lg leading-loose placeholder-stone-300 resize-none font-serif"
                                     style={{
-                                        backgroundImage: 'linear-gradient(transparent, transparent 31px, #e7e5e4 31px)',
+                                        // 가로 줄만 표시 (격자 세로선 제거됨)
+                                        backgroundImage: `linear-gradient(transparent, transparent 31px, ${lineColor} 31px)`,
                                         backgroundSize: '100% 32px',
                                         lineHeight: '32px',
                                         paddingTop: '0px'
@@ -197,7 +188,7 @@ const PoetryWrite = () => {
                         </div>
                     </div>
 
-                    {/* 하단 버튼 영역 */}
+                    {/* 버튼 */}
                     <div className="relative z-10 flex justify-end gap-4 mt-4 pt-6 border-t border-stone-200">
                         <button
                             type="button"
