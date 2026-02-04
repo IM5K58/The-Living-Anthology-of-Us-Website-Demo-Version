@@ -7,6 +7,8 @@ import living.poetry.ofus.dto.ArticleResponse;
 import living.poetry.ofus.dto.ArticleListResponse;
 import living.poetry.ofus.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +37,17 @@ public class ArticleService {
     }
 
     // 리스트 조회 메서드 수정
-    // 글 목록 조회 로직
-    public List<ArticleListResponse> findAll() {
-        return articleRepository.findAll().stream()
-                .map(ArticleListResponse::from)
-                .collect(Collectors.toList());
+    public Page<ArticleListResponse> findAll(ArticleType type, Pageable pageable) {
+        Page<Article> articles;
+
+        if (type != null) {
+            articles = articleRepository.findByType(type, pageable);
+        } else {
+            articles = articleRepository.findAll(pageable);
+        }
+
+        // 엔티티 Page를 DTO Page로 변환 (.map 사용)
+        return articles.map(ArticleListResponse::from);
     }
 
     // 상세 조회

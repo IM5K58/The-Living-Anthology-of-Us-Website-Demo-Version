@@ -12,3 +12,14 @@ export interface ArticleListResponse {
     title: string;
     writer: string;
 }
+
+// [추가] Spring Boot Page 객체 구조 대응
+export interface PageResponse<T> {
+    content: T[];          // 실제 데이터 목록
+    totalPages: number;    // 전체 페이지 수
+    totalElements: number; // 전체 데이터 수
+    number: number;        // 현재 페이지 번호 (0부터 시작)
+    first: boolean;
+    last: boolean;
+    empty: boolean;
+}
