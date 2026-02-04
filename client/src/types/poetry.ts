@@ -1,8 +1,8 @@
 // client/src/types/poetry.ts
-export interface Poetry {
-    id: number;
-    title?: string;
+export interface ArticleData {
+    title: string;
     content: string;
-    author?: string;
-    createdAt?: string;
+    writer: string;
+    template: 'VINTAGE' | 'CLEAN';
+    type: 'ESSAY' | 'RELAY';
 }

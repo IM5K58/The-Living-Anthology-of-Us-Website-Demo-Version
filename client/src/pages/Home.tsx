@@ -72,6 +72,11 @@ const Home = () => {
                         <Link to="/list" className="text-sm text-stone-600 hover:text-red-500 transition-colors flex items-center gap-1">
                             목록 보기 <span className="text-xs">→</span>
                         </Link>
+
+                        {/* [추가] 글쓰기 링크 */}
+                        <Link to="/write" className="text-sm font-bold text-stone-800 hover:text-red-500 transition-colors flex items-center gap-1 border-b border-stone-800 hover:border-red-500 pb-0.5">
+                            글 남기기 <span className="text-xs">✎</span>
+                        </Link>
                     </div>
                 </div>
             </header>
