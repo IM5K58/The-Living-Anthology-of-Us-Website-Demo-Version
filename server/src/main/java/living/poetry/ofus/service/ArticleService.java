@@ -56,4 +56,15 @@ public class ArticleService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 글을 찾을 수 없습니다. id=" + id));
         return new ArticleResponse(article);
     }
+
+    // [추가] 랜덤 조회 서비스
+    public List<ArticleListResponse> findRandom(ArticleType type, int count) {
+        // Repository에서 엔티티 리스트를 가져와서
+        List<Article> articles = articleRepository.findRandomByType(type.name(), count);
+
+        // DTO로 변환하여 반환
+        return articles.stream()
+                .map(ArticleListResponse::from) // ArticleListResponse에는 content가 없을 수 있음 확인 필요
+                .collect(Collectors.toList());
+    }
 }

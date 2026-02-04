@@ -26,3 +26,11 @@ export const getPoetryDetail = async (id: string): Promise<ArticleDetailResponse
     const response = await apiClient.get(`/articles/${id}`);
     return response.data;
 };
+
+// [추가] 랜덤 글 조회
+export const fetchRandomArticles = async (type: 'ESSAY' | 'RELAY', count: number = 5): Promise<ArticleListResponse[]> => {
+    const response = await apiClient.get('/articles/random', {
+        params: { type, count }
+    });
+    return response.data;
+};

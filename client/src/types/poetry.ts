@@ -11,6 +11,7 @@ export interface ArticleListResponse {
     id: number;
     title: string;
     writer: string;
+    content: string;
 }
 
 // [추가] Spring Boot Page 객체 구조 대응

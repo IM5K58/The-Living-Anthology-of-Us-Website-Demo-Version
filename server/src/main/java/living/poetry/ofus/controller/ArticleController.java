@@ -51,4 +51,16 @@ public class ArticleController {
         ArticleResponse article = articleService.getArticleDetail(id);
         return ResponseEntity.ok(article);
     }
+
+    // [추가] 랜덤 글 조회 API
+    // GET /api/articles/random?type=ESSAY&count=5
+    @GetMapping("/random")
+    public ResponseEntity<List<ArticleListResponse>> getRandomArticles(
+            @RequestParam(defaultValue = "ESSAY") ArticleType type,
+            @RequestParam(defaultValue = "5") int count
+    ) {
+        List<ArticleListResponse> articles = articleService.findRandom(type, count);
+        return ResponseEntity.ok(articles);
+    }
+
 }
