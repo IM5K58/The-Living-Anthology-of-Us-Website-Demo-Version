@@ -4,6 +4,7 @@ import living.poetry.ofus.domain.Article;
 import living.poetry.ofus.domain.ArticleType;
 import living.poetry.ofus.dto.ArticleRequest;
 import living.poetry.ofus.dto.ArticleResponse;
+import living.poetry.ofus.dto.ArticleListResponse;
 import living.poetry.ofus.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,10 +34,11 @@ public class ArticleService {
         return articleRepository.save(article).getId();
     }
 
-    // 목록 조회 (타입별)
-    public List<ArticleResponse> getArticles(ArticleType type) {
-        return articleRepository.findByTypeOrderByCreatedAtDesc(type).stream()
-                .map(ArticleResponse::new)
+    // 리스트 조회 메서드 수정
+    // 글 목록 조회 로직
+    public List<ArticleListResponse> findAll() {
+        return articleRepository.findAll().stream()
+                .map(ArticleListResponse::from)
                 .collect(Collectors.toList());
     }
 

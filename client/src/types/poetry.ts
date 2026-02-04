@@ -6,3 +6,9 @@ export interface ArticleData {
     template: 'VINTAGE' | 'CLEAN';
     type: 'ESSAY' | 'RELAY';
 }
+
+export interface ArticleListResponse {
+    id: number;
+    title: string;
+    writer: string;
+}

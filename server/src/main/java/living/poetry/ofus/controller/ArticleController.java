@@ -3,6 +3,7 @@ package living.poetry.ofus.controller;
 import living.poetry.ofus.domain.ArticleType;
 import living.poetry.ofus.dto.ArticleRequest;
 import living.poetry.ofus.dto.ArticleResponse;
+import living.poetry.ofus.dto.ArticleListResponse;
 import living.poetry.ofus.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +27,11 @@ public class ArticleController {
     }
 
     // 2. 글 목록 조회 (GET /api/articles?type=ESSAY)
+    // GET /api/articles?type=ESSAY (일반)
+    // GET /api/articles?type=RELAY (릴레이)
     @GetMapping
-    public ResponseEntity<List<ArticleResponse>> getArticles(
-            @RequestParam(defaultValue = "ESSAY") ArticleType type) {
-        List<ArticleResponse> articles = articleService.getArticles(type);
+    public ResponseEntity<List<ArticleListResponse>> getAllArticles() {
+        List<ArticleListResponse> articles = articleService.findAll();
         return ResponseEntity.ok(articles);
     }
 

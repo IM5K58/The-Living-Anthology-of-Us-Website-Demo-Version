@@ -1,7 +1,8 @@
 // client/src/App.tsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
-import PoetryWrite from './pages/PoetryWrite'; // 추가
+import PoetryWrite from './pages/PoetryWrite';
+import PoetryList from "./pages/PoetryList.tsx"; // 추가
 
 function App() {
     return (
@@ -9,6 +10,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/write" element={<PoetryWrite />} /> {/* 추가 */}
+                <Route path="/list" element={<PoetryList />} />
                 {/* 추가 경로는 여기에 라우트만 작성 */}
             </Routes>
         </Router>
