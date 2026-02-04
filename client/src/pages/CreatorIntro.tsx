@@ -44,7 +44,7 @@ const CreatorIntro: React.FC = () => {
                     </p>
 
                     <p className="mb-12">
-                        당신의 이야기가 이곳에서 아름다운 꽃이 되기를 응원합니다.
+                        당신의 이야기가 이곳에서 아름다운 꽃으로 피어오르기를 응원합니다.
                     </p>
 
                     <div className="text-right">

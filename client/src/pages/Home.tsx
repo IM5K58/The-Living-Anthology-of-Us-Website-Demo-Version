@@ -3,6 +3,9 @@ import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchRandomArticles } from '../api/poetryApi';
 
+// [1] 헤더 왼쪽에 들어갈 사진 (경로 확인해주세요!)
+import headerImage from '../assets/살아있는 우리들의 시집.png';
+
 // --- 화살표 아이콘 ---
 const ArrowLeft = () => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 md:w-8 md:h-8">
@@ -44,7 +47,7 @@ const Home = () => {
     const [rightIndex, setRightIndex] = useState(0);
     const [exitDirection, setExitDirection] = useState(1);
 
-    // [핵심] 드래그 중인지 판별하는 ref
+    // 드래그 판별 ref
     const isDragging = useRef(false);
 
     // --- 데이터 가져오기 로직 ---
@@ -120,14 +123,31 @@ const Home = () => {
 
             {/* --- 헤더 --- */}
             <header className="w-full max-w-7xl px-6 pt-10 pb-4 mb-8 md:mb-12 relative z-0">
-                <div className="flex justify-between items-end border-b border-red-400 pb-4">
-                    <div className="relative">
-                        <span className="absolute -left-3 -top-2 text-red-400 text-2xl font-serif">*</span>
-                        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-tight ml-2">
-                            살아있는 우리들의 시집
-                        </h1>
+                <div className="relative flex justify-between items-end border-b border-red-400 pb-4">
+
+                    {/* [왼쪽] 사진 */}
+                    <div className="relative z-10">
+                        {headerImage && (
+                            <img
+                                src={headerImage}
+                                alt="Header Logo"
+                                className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-md shadow-sm border border-stone-200"
+                            />
+                        )}
                     </div>
-                    <div className="flex flex-col items-end gap-1">
+
+                    {/* [중앙] 타이틀 (중앙 정렬) */}
+                    <div className="absolute inset-x-0 bottom-4 flex justify-center pointer-events-none">
+                        <div className="relative pointer-events-auto flex items-start">
+                            <span className="text-red-400 text-2xl font-serif mr-1 -mt-2">*</span>
+                            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-tight text-center">
+                                살아있는 우리들의 시집
+                            </h1>
+                        </div>
+                    </div>
+
+                    {/* [오른쪽] 링크 목록 */}
+                    <div className="relative z-10 flex flex-col items-end gap-1">
                         <span className="text-xs font-serif text-stone-500">since. 2022</span>
                         <Link to="/list" className="text-sm text-stone-600 hover:text-red-500 transition-colors flex items-center gap-1">
                             목록 보기 <span className="text-xs">→</span>
@@ -142,7 +162,7 @@ const Home = () => {
             {/* --- 메인 콘텐츠 (Grid Layout) --- */}
             <main className="w-full max-w-7xl px-4 md:px-12 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center pb-20 relative">
 
-                {/* [왼쪽] 각자의 이야기 (클릭 시 이동 기능 + 드래그 충돌 방지) */}
+                {/* [왼쪽] 각자의 이야기 */}
                 <div className="flex flex-col w-full relative z-50 group">
                     <div className="flex justify-between items-end mb-4 px-2">
                         <h3 className="text-sm text-stone-500">각자의 이야기</h3>
@@ -169,20 +189,13 @@ const Home = () => {
                                         return (
                                             <motion.div
                                                 key={story.id}
-                                                // [핵심] 1. 드래그 시작 시 플래그 설정
-                                                onDragStart={() => {
-                                                    isDragging.current = true;
-                                                }}
-                                                // [핵심] 2. 드래그 종료 핸들러
+                                                onDragStart={() => { isDragging.current = true; }}
                                                 onDragEnd={isTop ? handleLeftDragEnd : undefined}
-
-                                                // [핵심] 3. 클릭 시 드래그 여부 확인
                                                 onClick={() => {
                                                     if (isTop && !isDragging.current) {
                                                         navigate(`/poetry/${story.id}`);
                                                     }
                                                 }}
-
                                                 className={`absolute top-0 left-0 w-full h-full p-8 md:p-12 flex flex-col justify-center text-left grid-pattern paper-card-base ${story.color}`}
                                                 style={{
                                                     zIndex: leftStories.length - index,
@@ -204,20 +217,19 @@ const Home = () => {
                                                 whileTap={{ cursor: 'grabbing' }}
                                                 whileHover={isTop ? { y: yOffset - 5 } : {}}
                                             >
-                                                <div className="relative z-10 h-full flex flex-col pointer-events-none">
+                                                {/* [수정됨] z-10 -> z-30 (배경 질감보다 앞으로 나오게 함) */}
+                                                <div className="relative z-30 h-full flex flex-col pointer-events-none">
                                                     <div className="mb-auto pt-4">
                                                         <span className="inline-block px-2 py-1 border border-stone-800 text-xs font-bold mb-4">
                                                             No. {story.id}
                                                         </span>
                                                     </div>
-
                                                     <h2 className="text-2xl md:text-3xl font-bold leading-snug text-stone-800 mb-8 break-keep">
                                                         {story.title}
                                                     </h2>
                                                     <p className="whitespace-pre-line text-lg leading-loose text-stone-700 font-serif line-clamp-[6]">
                                                         {story.content}
                                                     </p>
-
                                                     <div className="mt-auto pt-8 border-t border-stone-300/50 text-right">
                                                         <p className="text-sm font-bold text-stone-500">
                                                             지은이 . {story.author}
@@ -229,7 +241,6 @@ const Home = () => {
                                     })}
                                 </AnimatePresence>
 
-                                {/* Reset 화면 */}
                                 {leftStories.length > 0 && leftIndex === leftStories.length && (
                                     <div className="absolute inset-0 flex flex-col items-center justify-center text-stone-400 text-center border-2 border-dashed border-stone-300 rounded-sm bg-stone-50/50">
                                         <p className="mb-4 text-stone-500">모든 이야기를 읽으셨습니다.</p>
@@ -241,7 +252,6 @@ const Home = () => {
                                         </button>
                                     </div>
                                 )}
-
                                 {leftStories.length === 0 && (
                                     <div className="absolute inset-0 flex flex-col items-center justify-center text-stone-400 border border-stone-200 bg-stone-50">
                                         <p>아직 등록된 이야기가 없습니다.</p>
@@ -252,7 +262,7 @@ const Home = () => {
                     </div>
                 </div>
 
-                {/* [오른쪽] 우리들의 이야기 (고정 데이터 유지) */}
+                {/* [오른쪽] 우리들의 이야기 */}
                 <div className="flex flex-col w-full relative z-0">
                     <div className="flex justify-between items-end mb-4 px-2">
                         <h3 className="text-sm text-stone-500">우리들의 이야기</h3>
@@ -274,19 +284,18 @@ const Home = () => {
                                     exit={{ rotateY: 90, opacity: 0, transition: { duration: 0.3 } }}
                                     transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                                 >
-                                    <div className="h-full flex flex-col relative z-10">
+                                    {/* [수정됨] z-10 -> z-30 (오버레이 효과보다 확실히 앞으로) */}
+                                    <div className="h-full flex flex-col relative z-30">
                                         <div className="flex justify-between items-start mb-10 border-b border-stone-800/20 pb-4">
                                             <span className="text-stone-400 font-serif italic text-lg">Essay</span>
                                             <span className="text-xs text-stone-400 border border-stone-300 px-2 py-0.5 rounded-full">Page {rightIndex + 1}</span>
                                         </div>
-
                                         <h2 className="text-2xl md:text-3xl font-bold leading-tight text-stone-800 mb-6">
                                             {RIGHT_STORIES[rightIndex].title}
                                         </h2>
                                         <p className="whitespace-pre-line text-stone-700 leading-relaxed text-lg">
                                             {RIGHT_STORIES[rightIndex].content}
                                         </p>
-
                                         <div className="mt-auto pt-6 text-right">
                                             <span className="text-sm font-bold text-stone-500">
                                                 By {RIGHT_STORIES[rightIndex].author}
@@ -294,13 +303,13 @@ const Home = () => {
                                         </div>
                                     </div>
 
+                                    {/* 오버레이들 (z-20 유지 -> 글자가 z-30이므로 이제 안 가려짐) */}
                                     <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-stone-900/10 to-transparent pointer-events-none z-20 mix-blend-multiply"></div>
                                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent pointer-events-none z-20"></div>
                                 </motion.div>
                             </AnimatePresence>
                         </div>
                     </div>
-
                     <div className="mt-6 flex justify-center items-center gap-1 text-xs text-stone-400 font-serif">
                         {RIGHT_STORIES.map((_, idx) => (
                             <button
@@ -335,7 +344,6 @@ const Home = () => {
                     {/* 오른쪽: 링크 및 정보 */}
                     <div className="flex flex-col md:items-end gap-2 text-sm text-stone-500 font-serif">
                         <div className="flex gap-4">
-                            {/* a 태그 대신 Link 태그 사용 */}
                             <Link to="/privacy" className="hover:text-stone-800 transition-colors">개인정보처리방침</Link>
                             <span className="text-stone-300">|</span>
                             <Link to="/terms" className="hover:text-stone-800 transition-colors">이용약관</Link>
