@@ -5,93 +5,59 @@
 @tailwind utilities;
 
 :root {
-    /* 노이즈 텍스처 URL */
     --paper-noise: url("https://www.transparenttextures.com/patterns/natural-paper.png");
 }
 
-/* Vite 기본 스타일 (필요 없다면 제거 가능, 하지만 기존 코드에 있었으므로 유지) */
-#root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
-}
-
-/* 로고 관련 스타일 */
-.logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-}
-.logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-    filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    a:nth-of-type(2) .logo {
-        animation: logo-spin infinite 20s linear;
-    }
-}
-
-.card {
-    padding: 2em;
-}
-
-.read-the-docs {
-    color: #888;
-}
-
-/* --- 커스텀 디자인 스타일 --- */
-
 body {
     font-family: 'MaruBuri', serif;
-    background-color: #fffdf5; /* 전체 배경색 */
+    background-color: #fffdf5;
     margin: 0;
     padding: 0;
 }
 
-/* 격자 무늬 배경 스타일 */
-.grid-pattern {
-    /* 1. 배경색 */
-    background-color: #fffcf0;
+/* --- [NEW] 격자 없는 종이 질감 (Noise Only) --- */
+.paper-texture {
+    background-image: var(--paper-noise);
+    background-blend-mode: multiply;
 
-    /* 2. 배경 이미지 레이어: 노이즈 + 가로선 + 세로선 */
+    /* 그림자 */
+    box-shadow:
+            0 2px 5px rgba(0,0,0,0.05),
+            0 10px 20px rgba(0,0,0,0.03);
+    transition: all 0.5s ease;
+    border-radius: 4px;
+}
+
+/* --- [NEW] 빈티지 스타일 (Vintage) --- */
+.theme-vintage {
+    background-color: #fffcf0; /* 따뜻한 미색 */
+    border: 1px solid rgba(230, 106, 94, 0.3); /* 붉은 계열 테두리 */
+    color: #57534e; /* Stone-600 */
+}
+
+/* --- [NEW] 깔끔한 스타일 (Clean) --- */
+.theme-clean {
+    background-color: #ffffff; /* 순백색 */
+    border: 1px solid #e5e7eb; /* 연한 회색 테두리 */
+    color: #374151; /* Gray-700 */
+}
+
+/* (기존 홈 화면용 스타일 유지) */
+.paper-card-base {
+    box-shadow:
+            0 1px 2px rgba(0,0,0,0.05),
+            0 8px 16px rgba(0,0,0,0.05),
+            0 20px 40px rgba(0,0,0,0.02);
+    border-radius: 4px;
+}
+
+.grid-pattern {
+    background-color: #fffcf0;
     background-image:
             var(--paper-noise),
             linear-gradient(to right, rgba(230, 106, 94, 0.15) 1px, transparent 1px),
             linear-gradient(to bottom, rgba(230, 106, 94, 0.15) 1px, transparent 1px);
-
-    /* 3. 혼합 모드 */
     background-blend-mode: multiply, normal, normal;
-
-    /* 4. 격자 크기 */
     background-size: auto, 40px 40px, 40px 40px;
-
-    /* 5. 테두리 */
     border: 1px solid rgba(230, 106, 94, 0.3);
 }
-
-/* 카드 기본 그림자 */
-.paper-card-base {
-    box-shadow:
-            0 2px 5px rgba(0,0,0,0.05),
-            0 10px 20px rgba(0,0,0,0.03);
-}
-
-/* 색상 바리에이션 */
-.paper-variant-1 { background-color: #fffcf0; } /* 기본 미색 */
-.paper-variant-2 { background-color: #fcfae8; } /* 약간 노란빛 */
-.paper-variant-3 { background-color: #f7f4e0; } /* 오래된 종이빛 */
