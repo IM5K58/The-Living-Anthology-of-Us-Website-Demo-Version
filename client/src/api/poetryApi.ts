@@ -1,6 +1,6 @@
 // client/src/api/poetryApi.ts
 import apiClient from './client';
-import type {ArticleData, ArticleListResponse, PageResponse} from '../types/poetry';
+import type {ArticleData, ArticleListResponse, PageResponse,ArticleDetailResponse} from '../types/poetry';
 
 export const createPoetry = async (data: ArticleData): Promise<number> => {
     // 백엔드 URL이 /api/poetry -> /api/articles 로 변경됨
@@ -18,5 +18,11 @@ export const fetchArticles = async (
     const response = await apiClient.get('/articles', {
         params: { type, page, size }
     });
+    return response.data;
+};
+
+// [추가] 상세 글 조회 API
+export const getPoetryDetail = async (id: string): Promise<ArticleDetailResponse> => {
+    const response = await apiClient.get(`/articles/${id}`);
     return response.data;
 };

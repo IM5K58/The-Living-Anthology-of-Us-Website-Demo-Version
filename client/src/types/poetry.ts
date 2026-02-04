@@ -23,3 +23,13 @@ export interface PageResponse<T> {
     last: boolean;
     empty: boolean;
 }
+
+// [추가] 상세 조회용 응답 타입
+export interface ArticleDetailResponse {
+    id: number;
+    title: string;
+    content: string;
+    writer: string;
+    template: string; // 'VINTAGE' | 'CLEAN'
+    type: string;
+}

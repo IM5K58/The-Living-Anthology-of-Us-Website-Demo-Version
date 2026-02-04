@@ -88,7 +88,7 @@ const Home = () => {
                 <div className="flex flex-col w-full relative z-50 group">
                     <div className="flex justify-between items-end mb-4 px-2">
                         <h3 className="text-sm text-stone-500">오늘의 이야기</h3>
-                        <span className="text-xs text-stone-400">Drag to peel &rarr;</span>
+                        <span className="text-xs text-stone-400">한장씩 드래그하여 떼어내보세요 &rarr;</span>
                     </div>
 
                     {/* [수정] aspect-[3/4] -> aspect-[4/5] 로 변경하여 세로 길이 축소 */}
