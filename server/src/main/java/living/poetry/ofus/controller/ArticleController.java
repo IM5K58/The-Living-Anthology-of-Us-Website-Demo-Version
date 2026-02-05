@@ -3,8 +3,13 @@ package living.poetry.ofus.controller;
 import living.poetry.ofus.domain.ArticleType;
 import living.poetry.ofus.dto.ArticleRequest;
 import living.poetry.ofus.dto.ArticleResponse;
+import living.poetry.ofus.dto.ArticleListResponse;
 import living.poetry.ofus.service.ArticleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +31,17 @@ public class ArticleController {
     }
 
     // 2. 글 목록 조회 (GET /api/articles?type=ESSAY)
+    // 요청 예시: GET /api/articles?type=ESSAY&page=0&size=6
     @GetMapping
-    public ResponseEntity<List<ArticleResponse>> getArticles(
-            @RequestParam(defaultValue = "ESSAY") ArticleType type) {
-        List<ArticleResponse> articles = articleService.getArticles(type);
+    public ResponseEntity<Page<ArticleListResponse>> getAllArticles(
+            @RequestParam(required = false) ArticleType type,
+            @RequestParam(defaultValue = "0") int page, // 기본 0페이지 (첫 페이지)
+            @RequestParam(defaultValue = "6") int size  // 기본 6개씩
+    ) {
+        // id 기준 내림차순 정렬 (최신글이 먼저 오도록)
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+
+        Page<ArticleListResponse> articles = articleService.findAll(type, pageable);
         return ResponseEntity.ok(articles);
     }
 
@@ -39,4 +51,16 @@ public class ArticleController {
         ArticleResponse article = articleService.getArticleDetail(id);
         return ResponseEntity.ok(article);
     }
+
+    // [추가] 랜덤 글 조회 API
+    // GET /api/articles/random?type=ESSAY&count=5
+    @GetMapping("/random")
+    public ResponseEntity<List<ArticleListResponse>> getRandomArticles(
+            @RequestParam(defaultValue = "ESSAY") ArticleType type,
+            @RequestParam(defaultValue = "5") int count
+    ) {
+        List<ArticleListResponse> articles = articleService.findRandom(type, count);
+        return ResponseEntity.ok(articles);
+    }
+
 }
